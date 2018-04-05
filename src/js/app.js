@@ -39,7 +39,12 @@ App = {
       var AdoptionArtifact = data;
       App.contracts.Adoption = TruffleContract(AdoptionArtifact);
       App.contracts.Adoption.setProvider(App.web3Provider);
-
+      App.contracts.Adoption.deployed().then(function(instance) {
+        adoptionInstance = instance;
+         return adoptionInstance.getOwner.call();
+      }).then(function(owner) {
+        $('.contract-owner').text(owner);
+      })
       return App.markAdopted();
     })
     return App.bindEvents();
@@ -53,12 +58,13 @@ App = {
     var adoptionInstance;
     App.contracts.Adoption.deployed().then(function(instance) {
       adoptionInstance = instance;
-
+      console.log(adoptionInstance.getOwner.call());
       return adoptionInstance.getAdopters.call();
     }).then(function(adopters) {
       for (i = 0; i < adopters.length; i++) {
         if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
           $('.panel-pet').eq(i).find('button').text('Success').attr('disabled', true);
+          $('.panel-pet').eq(i).find('.pet-owner').text(adopters[i].substring(0, 8) + "...");
         }
       }
     }).catch(function(err) {

@@ -1,14 +1,22 @@
 pragma solidity ^0.4.17;
 
-contract Adoption {
-    address[16] private adopters;
-    event PetAdopted(uint petId);
+import "./Ownable.sol";
 
-    function adopt(uint petId) public returns (uint) {
+contract Adoption is Ownable {
+    address[16] private adopters;
+
+    function () public payable {
+
+    }
+
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
+    function adopt(uint petId) public payable returns (uint) {
         require(petId >= 0 && petId <= 15);
 
         adopters[petId] = msg.sender;
-        PetAdopted(petId);
         return petId;
     }
 
